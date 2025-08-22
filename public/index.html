@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp Bot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>WhatsApp Bot Control Panel</h1>
+
+  <div id="qr-section">
+    <p>Scan QR Code untuk login WhatsApp:</p>
+    <img id="qr-code" src="" alt="QR Code" />
+  </div>
+
+  <div id="connected-section" style="display:none;">
+    <h2>Bot Connected ✅</h2>
+    <form id="send-form">
+      <label for="group">Pilih Grup:</label>
+      <select id="group"></select>
+      
+      <label for="message">Template Pesan:</label>
+      <textarea id="message" placeholder="Tulis pesan..."></textarea>
+      
+      <button type="submit">Kirim</button>
+    </form>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
