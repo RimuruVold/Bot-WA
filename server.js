@@ -1,6 +1,5 @@
 const express = require("express");
-const { makeWASocket, useMultiFileAuthState, DisconnectReason } = require("@whiskeysockets/baileys");
-const qrcode = require("qrcode");
+const { makeWASocket, useMultiFileAuthState } = require("@whiskeysockets/baileys");
 const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
@@ -16,25 +15,22 @@ let sock;
 let connected = false;
 let groupsCache = [];
 
-// Start WA connection
 async function startSock() {
   const { state, saveCreds } = await useMultiFileAuthState("auth_info");
+
   sock = makeWASocket({
     auth: state,
-    printQRInTerminal: false
+    printQRInTerminal: false // kita tidak pakai QR
   });
 
   sock.ev.on("connection.update", async (update) => {
-    const { connection, qr } = update;
-    if (qr) {
-      const qrCodeUrl = await qrcode.toDataURL(qr);
-      io.emit("qr", qrCodeUrl);
-    }
+    const { connection } = update;
     if (connection === "open") {
       connected = true;
       io.emit("connected");
       console.log("✅ Bot connected to WhatsApp");
-      // get groups
+
+      // ambil grup
       const groups = await sock.groupFetchAllParticipating();
       groupsCache = Object.values(groups).map(g => ({
         id: g.id,
@@ -50,7 +46,24 @@ async function startSock() {
   sock.ev.on("creds.update", saveCreds);
 }
 
-// API to send message
+startSock();
+
+// API untuk generate pairing code dengan nomor HP
+app.post("/pair", async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: "Phone number required" });
+
+    const code = await sock.requestPairingCode(phone);
+    console.log("Pairing code:", code);
+    res.json({ code });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to get pairing code" });
+  }
+});
+
+// API untuk kirim pesan
 app.post("/send", async (req, res) => {
   try {
     if (!connected) return res.status(400).json({ error: "Not connected" });
@@ -64,7 +77,7 @@ app.post("/send", async (req, res) => {
   }
 });
 
-// Socket.IO connection
+// socket.io
 io.on("connection", (socket) => {
   console.log("Client connected");
   if (connected) {
@@ -72,8 +85,6 @@ io.on("connection", (socket) => {
     socket.emit("groups", groupsCache);
   }
 });
-
-startSock();
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
