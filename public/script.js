@@ -1,20 +1,30 @@
 const socket = io();
 
-const qrSection = document.getElementById("qr-section");
-const qrCodeImg = document.getElementById("qr-code");
+const pairSection = document.getElementById("pair-section");
+const pairCodeEl = document.getElementById("pair-code");
 const connectedSection = document.getElementById("connected-section");
 const groupSelect = document.getElementById("group");
 const sendForm = document.getElementById("send-form");
 const messageInput = document.getElementById("message");
 
-socket.on("qr", (qrUrl) => {
-  qrCodeImg.src = qrUrl;
-  qrSection.style.display = "block";
-  connectedSection.style.display = "none";
-});
+async function getCode() {
+  const phone = document.getElementById("phone").value.trim();
+  if (!phone) return alert("Masukkan nomor telepon!");
+  const res = await fetch("/pair", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone })
+  });
+  const data = await res.json();
+  if (data.code) {
+    pairCodeEl.textContent = "Kode Pairing: " + data.code;
+  } else {
+    pairCodeEl.textContent = "Gagal mendapatkan kode.";
+  }
+}
 
 socket.on("connected", () => {
-  qrSection.style.display = "none";
+  pairSection.style.display = "none";
   connectedSection.style.display = "block";
 });
 
