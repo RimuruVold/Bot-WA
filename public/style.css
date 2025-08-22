@@ -1,0 +1,26 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #f8f9fa;
+}
+
+h1 {
+  color: #333;
+}
+
+#qr-code {
+  width: 250px;
+  border: 2px solid #333;
+  padding: 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  gap: 10px;
+}
+
+textarea {
+  min-height: 80px;
+}
