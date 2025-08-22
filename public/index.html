@@ -1,34 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>WhatsApp Bot</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WA Auto-Send (whatsapp-web.js)</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <h1>WhatsApp Bot Control Panel</h1>
+  <div class="wrap">
+    <h1>WhatsApp Auto-Send Bot</h1><section class="card">
+  <h2>1) Login via QR</h2>
+  <p>Buka WhatsApp → Perangkat tertaut → Tautkan perangkat → Pindai QR berikut.</p>
+  <div id="qr" class="qr">Menunggu QR…</div>
+  <div id="status" class="status"></div>
+</section>
 
-  <div id="pair-section">
-    <p>Masukkan nomor WhatsApp (format internasional, misalnya 628123456789):</p>
-    <input id="phone" type="text" placeholder="628xxx" />
-    <button onclick="getCode()">Dapatkan Kode</button>
-    <p id="pair-code"></p>
+<section class="card">
+  <h2>2) Pilih Grup</h2>
+  <div class="toolbar">
+    <input id="search" placeholder="Cari nama grup…" />
+    <button id="refresh">Muat Grup</button>
   </div>
+  <div id="groups" class="groups"></div>
+</section>
 
-  <div id="connected-section" style="display:none;">
-    <h2>Bot Connected ✅</h2>
-    <form id="send-form">
-      <label for="group">Pilih Grup:</label>
-      <select id="group"></select>
-      
-      <label for="message">Template Pesan:</label>
-      <textarea id="message" placeholder="Tulis pesan..."></textarea>
-      
-      <button type="submit">Kirim</button>
-    </form>
+<section class="card">
+  <h2>3) Template / Firebase</h2>
+  <textarea id="template" rows="6" placeholder="Tulis template pesan…"></textarea>
+  <div class="or">— atau —</div>
+  <input id="firebaseURL" placeholder="Firebase Realtime DB URL (opsional)" />
+  <p class="hint">Jika diisi, bot akan membuat pesan WTS dari data Firebase (array/object).</p>
+</section>
+
+<section class="card">
+  <h2>4) Jalankan</h2>
+  <label>Interval (detik, min 30): <input id="interval" type="number" value="300"></label>
+  <div class="btnrow">
+    <button id="start">Start Auto-Send</button>
+    <button id="stop" class="ghost">Stop</button>
   </div>
+  <div id="log" class="log"></div>
+</section>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="script.js"></script>
-</body>
+  </div>  <script src="/socket.io/socket.io.js"></script>  <script src="/script.js"></script></body>
 </html>
